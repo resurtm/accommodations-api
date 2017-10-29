@@ -49,3 +49,24 @@ def auth():
     )
 
     return jsonify({'token': token.decode('utf-8')})
+
+
+@app.route('/v1/check', methods=['POST'])
+def check():
+    data = parse_request_json()
+    if 'token' not in data:
+        abort(400)
+
+    data = jwt.decode(data['token'], app.config['JWT_SECRET_KEY'],
+                      algorithms=['HS256'])
+
+    count = mongo.db.users.count({
+        '$and': [
+            {'username': data['username']},
+            {'email': data['email']},
+        ],
+    })
+    if count == 0:
+        abort(400)
+
+    return jsonify({})
