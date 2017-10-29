@@ -1,7 +1,9 @@
 from os import path as p
 
 DEBUG = False
+
 SECRET_KEY = '!!! CHANGE THIS !!!'
+JWT_SECRET_KEY = '!!! CHANGE THIS !!!'
 
 MONGO_DBNAME = 'task_tracker'
 

@@ -7,7 +7,7 @@ def readme():
 
 
 setup(
-    name='task_tracker_api',
+    name='task-tracker-api',
     packages=['task_tracker_api'],
     version='0.0.1',
     description='Task Tracker API',
@@ -25,5 +25,7 @@ setup(
         'Flask-PyMongo',
         'celery',
         'jsonschema',
+        'bcrypt',
+        'PyJWT',
     ]
 )

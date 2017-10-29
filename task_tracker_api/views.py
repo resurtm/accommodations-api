@@ -1,8 +1,8 @@
-import json
+import bcrypt
+import jwt
+from flask import abort, jsonify
 
-from flask import abort
-
-from task_tracker_api.main import app
+from task_tracker_api.main import app, mongo
 from task_tracker_api.tools import parse_request_json, validate_json_schema
 
 
@@ -12,5 +12,37 @@ def register():
     if not validate_json_schema(data, 'user'):
         abort(400)
 
-    # mongo.db.users.insert
-    return json.dumps(data, indent=4)
+    count = mongo.db.users.count({
+        '$or': [
+            {'username': data['username']},
+            {'email': data['email']},
+        ],
+    })
+    if count != 0:
+        abort(400)
+
+    data['password'] = bcrypt.hashpw(data['password'].encode('utf-8'),
+                                     bcrypt.gensalt())
+    mongo.db.users.insert_one(data)
+    return jsonify({})
+
+
+@app.route('/v1/auth', methods=['POST'])
+def auth():
+    data = parse_request_json()
+    if not validate_json_schema(data, 'auth'):
+        abort(400)
+
+    user = mongo.db.users.find_one({'username': data['username']})
+    if not user:
+        abort(400)
+
+    if not bcrypt.checkpw(data['password'].encode('utf-8'), user['password']):
+        abort(400)
+
+    token = jwt.encode(
+        {'username': user['username'], 'email': user['email']},
+        app.config['JWT_SECRET_KEY']
+    )
+
+    return jsonify({'token': token.decode('utf-8')})
