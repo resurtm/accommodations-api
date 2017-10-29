@@ -1,4 +1,8 @@
 /.idea/
-/dist
 /*.egg-info/
 /venv/
+/task_tracker_api/local_settings.py
+*.py[doc]
+__pycache/
+/build/
+/dist/
