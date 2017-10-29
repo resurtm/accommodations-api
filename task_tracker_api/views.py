@@ -1,3 +1,5 @@
+import datetime
+
 import bcrypt
 import jwt
 from flask import abort, jsonify
@@ -41,7 +43,8 @@ def auth():
         abort(400)
 
     token = jwt.encode(
-        {'username': user['username'], 'email': user['email']},
+        {'exp': datetime.datetime.utcnow() + datetime.timedelta(weeks=4),
+         'username': user['username'], 'email': user['email']},
         app.config['JWT_SECRET_KEY']
     )
 
