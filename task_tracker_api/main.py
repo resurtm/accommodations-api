@@ -16,4 +16,8 @@ def after_request(response):
 
 
 # noinspection PyUnresolvedReferences
-import task_tracker_api.views  # noqa
+import task_tracker_api.views.auth  # noqa
+# noinspection PyUnresolvedReferences
+import task_tracker_api.views.common  # noqa
+# noinspection PyUnresolvedReferences
+import task_tracker_api.views.project  # noqa

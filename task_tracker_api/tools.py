@@ -3,7 +3,7 @@ from os import path as p
 
 import jsonschema
 
-from .main import app
+from task_tracker_api.main import app
 
 
 def validate_json(data, schema):
