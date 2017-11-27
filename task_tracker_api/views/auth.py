@@ -10,7 +10,7 @@ from task_tracker_api.repos.user import user_exists, upsert_user
 
 @app.route('/v1/auth/signup', methods=['POST'])
 @jsonified
-@validate_data('auth/signup', 'Sign up data is invalid')
+@validate_data('signup', 'Sign up data is invalid')
 def signup(json):
     if user_exists(json['username'], json['email']):
         return 'User already exists', 400
@@ -22,7 +22,7 @@ def signup(json):
 
 @app.route('/v1/auth/signin', methods=['POST'])
 @jsonified
-@validate_data('auth/signin', 'Sign in data is invalid')
+@validate_data('signin', 'Sign in data is invalid')
 def signin(json):
     user = mongo.db.users.find_one({'username': json['username']})
     if not user:
