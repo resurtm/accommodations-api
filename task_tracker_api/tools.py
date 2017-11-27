@@ -1,23 +1,17 @@
 import json
-import os
+from os import path as p
 
 import jsonschema
-from flask import request
 
-from task_tracker_api.main import app
-
-
-def parse_request_json():
-    return json.loads(request.data.decode('utf-8', 'strict'))
+from .main import app
 
 
-def validate_json_schema(json_data, schema_name):
-    path = os.path.join(app.config['JSON_SCHEMA_PATH'],
-                        '{}.json'.format(schema_name))
+def validate_json(data, schema):
+    path = p.join(app.config['JSON_SCHEMA_PATH'], schema + '.json')
     with open(path, 'r') as fp:
-        schema_data = json.loads(fp.read())
+        fd = json.loads(fp.read())
     try:
-        jsonschema.validate(json_data, schema_data)
+        jsonschema.validate(data, fd)
     except jsonschema.ValidationError:
         return False
     return True

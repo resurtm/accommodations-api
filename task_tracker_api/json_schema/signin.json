@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "description": "Validates AuthEntry struct/object data",
+  "description": "Validates data for signin endpoint",
   "type": "object",
   "properties": {
     "username": {

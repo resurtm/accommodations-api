@@ -4,7 +4,7 @@ from flask_pymongo import PyMongo
 app = Flask(__name__)
 
 app.config.from_object('task_tracker_api.settings')
-app.config.from_envvar('TASK_TRACKER_API_SETTINGS')
+app.config.from_envvar('APP_SETTINGS')
 
 mongo = PyMongo(app)
 
@@ -16,4 +16,4 @@ def after_request(response):
 
 
 # noinspection PyUnresolvedReferences
-import task_tracker_api.views
+import task_tracker_api.views  # noqa
