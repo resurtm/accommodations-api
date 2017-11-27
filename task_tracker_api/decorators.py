@@ -4,7 +4,7 @@ import jwt
 from flask import request, make_response, jsonify
 from flask.views import MethodView
 
-from task_tracker_api.main import app
+from task_tracker_api.main import app, mongo
 from task_tracker_api.tools import validate_json
 
 
@@ -23,10 +23,18 @@ def jwt_auth(wrapped):
                             'msg': 'Bearer token malformed'}), 401
 
         try:
-            jwt.decode(token,
-                       app.config['JWT_SECRET_KEY'],
-                       algorithms=['HS256'])
+            data = jwt.decode(token,
+                              app.config['JWT_SECRET_KEY'],
+                              algorithms=['HS256'])
         except jwt.exceptions.DecodeError:
+            return jsonify({'ok': False,
+                            'msg': 'Invalid bearer token'}), 401
+
+        count = mongo.db.users.count({'$and': [
+            {'username': data['username']},
+            {'email': data['email']},
+        ]})
+        if count == 0:
             return jsonify({'ok': False,
                             'msg': 'Invalid bearer token'}), 401
 
