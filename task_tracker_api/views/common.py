@@ -1,4 +1,4 @@
-from task_tracker_api.decorators import jsonified
+from task_tracker_api.decorators import jsonified, jwt_auth
 from task_tracker_api.main import app
 
 
@@ -9,6 +9,7 @@ def guest_ping(json):
 
 
 @app.route('/v1/auth-ping', methods=['POST'])
+@jwt_auth
 @jsonified
 def auth_ping(json):
     return '', {'data': json}

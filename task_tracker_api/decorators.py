@@ -1,9 +1,38 @@
 import functools
 
+import jwt
 from flask import request, make_response, jsonify
 from flask.views import MethodView
 
+from task_tracker_api.main import app
 from task_tracker_api.tools import validate_json
+
+
+def jwt_auth(wrapped):
+    @functools.wraps(wrapped)
+    def decorator(*args, **kwargs):
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('bearer '):
+            return jsonify({'ok': False,
+                            'msg': 'Authentication required'}), 401
+
+        try:
+            token = auth_header.split(' ')[1]
+        except IndexError:
+            return jsonify({'ok': False,
+                            'msg': 'Bearer token malformed'}), 401
+
+        try:
+            jwt.decode(token,
+                       app.config['JWT_SECRET_KEY'],
+                       algorithms=['HS256'])
+        except jwt.exceptions.DecodeError:
+            return jsonify({'ok': False,
+                            'msg': 'Invalid bearer token'}), 401
+
+        return wrapped(*args, **kwargs)
+
+    return decorator
 
 
 def jsonified(wrapped):
