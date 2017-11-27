@@ -23,9 +23,6 @@ class ProjectAPI(MethodView):
         """R in CRUD"""
         return {'data': {}, 'method': 'read project {}'.format(str(id))}
 
-    def get(self, id):
-        return self.get_all() if id is None else self.get_one(id)
-
     @jwt_auth
     @jsonified
     def put(self, json, id):
@@ -37,6 +34,9 @@ class ProjectAPI(MethodView):
     def delete(self, json, id):
         """D in CRUD"""
         return {'data': json, 'method': 'delete project {}'.format(str(id))}
+
+    def get(self, id):
+        return self.get_all() if id is None else self.get_one(id)
 
 
 project_view = ProjectAPI.as_view('project_api')

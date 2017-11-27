@@ -5,25 +5,18 @@ import jwt
 
 from task_tracker_api.decorators import jsonified, validate_data
 from task_tracker_api.main import app, mongo
+from task_tracker_api.repos.user import user_exists, upsert_user
 
 
 @app.route('/v1/auth/signup', methods=['POST'])
 @jsonified
 @validate_data('auth/signup', 'Sign up data is invalid')
 def signup(json):
-    query = {'$or': [
-        {'username': json['username']},
-        {'email': json['email']},
-    ]}
-    count = mongo.db.users.count(query)
-    if count != 0:
+    if user_exists(json['username'], json['email']):
         return 'User already exists', 400
-
     json['password'] = bcrypt.hashpw(json['password'].encode('utf-8'),
                                      bcrypt.gensalt())
-    mongo.db.users.update_one(query,
-                              {"$setOnInsert": json},
-                              upsert=True)
+    upsert_user(json['username'], json['email'], json)
     return 'User created'
 
 
