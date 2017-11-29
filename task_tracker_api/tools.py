@@ -2,6 +2,7 @@ import json
 from os import path as p
 
 import jsonschema
+from bson import ObjectId
 
 from task_tracker_api.main import app
 
@@ -15,3 +16,10 @@ def validate_json(data, schema):
     except jsonschema.ValidationError:
         return False
     return True
+
+
+class JSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, ObjectId):
+            return str(o)
+        return json.JSONEncoder.default(self, o)

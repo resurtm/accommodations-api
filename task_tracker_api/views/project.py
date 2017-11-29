@@ -1,35 +1,39 @@
 from flask.views import MethodView
 
-from task_tracker_api.decorators import jsonified, jwt_auth
+from task_tracker_api.decorators import jsonified, jwt_auth, validate_data
 from task_tracker_api.main import app
+from task_tracker_api.repos.project import project_exists, upsert_project
 
 
 class ProjectAPI(MethodView):
-    @jwt_auth
+    @jwt_auth(need_user=True)
     @jsonified
-    def post(self, json):
+    @validate_data('project', 'Project data is invalid')
+    def post(self, json, user):
         """C in CRUD"""
-        return {'data': json, 'method': 'create project'}
+        if project_exists(json['title'], user['_id']):
+            return 'Project already exists', 400
+        return {'project': upsert_project(json['title'], user['_id'])}
 
-    @jwt_auth
+    @jwt_auth()
     @jsonified
     def get_all(self):
         """R in CRUD"""
         return {'data': {}, 'method': 'read all projects'}
 
-    @jwt_auth
+    @jwt_auth()
     @jsonified
     def get_one(self, id):
         """R in CRUD"""
         return {'data': {}, 'method': 'read project {}'.format(str(id))}
 
-    @jwt_auth
+    @jwt_auth()
     @jsonified
     def put(self, json, id):
         """U in CRUD"""
         return {'data': json, 'method': 'update project {}'.format(str(id))}
 
-    @jwt_auth
+    @jwt_auth()
     @jsonified
     def delete(self, json, id):
         """D in CRUD"""

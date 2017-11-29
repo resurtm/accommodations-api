@@ -27,5 +27,13 @@ setup(
         'jsonschema',
         'bcrypt',
         'PyJWT',
-    ]
+        'python-slugify',
+        'bson',
+    ],
+    setup_requires=[
+        'pytest-runner',
+    ],
+    tests_require=[
+        'pytest',
+    ],
 )

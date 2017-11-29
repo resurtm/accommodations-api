@@ -4,8 +4,8 @@ import bcrypt
 import jwt
 
 from task_tracker_api.decorators import jsonified, validate_data
-from task_tracker_api.main import app, mongo
-from task_tracker_api.repos.user import user_exists, upsert_user
+from task_tracker_api.main import app
+from task_tracker_api.repos.user import user_exists, upsert_user, find_user
 
 
 @app.route('/v1/auth/signup', methods=['POST'])
@@ -16,7 +16,7 @@ def signup(json):
         return 'User already exists', 400
     json['password'] = bcrypt.hashpw(json['password'].encode('utf-8'),
                                      bcrypt.gensalt())
-    upsert_user(json['username'], json['email'], json)
+    upsert_user(json['username'], json['email'])
     return 'User created'
 
 
@@ -24,7 +24,7 @@ def signup(json):
 @jsonified
 @validate_data('signin', 'Sign in data is invalid')
 def signin(json):
-    user = mongo.db.users.find_one({'username': json['username']})
+    user = find_user(json['username'], json['email'])
     if not user:
         return 'Unable to find user for sign in', 400
     if not bcrypt.checkpw(json['password'].encode('utf-8'), user['password']):
@@ -44,19 +44,12 @@ def signin(json):
 def check(json):
     if 'token' not in json:
         return 'Unable to validate auth check data', 400
-
     try:
         data = jwt.decode(json['token'],
                           app.config['JWT_SECRET_KEY'],
                           algorithms=['HS256'])
     except jwt.exceptions.DecodeError:
         return 'Invalid token has been specified', 400
-
-    count = mongo.db.users.count({'$and': [
-        {'username': data['username']},
-        {'email': data['email']},
-    ]})
-    if count == 0:
+    if not user_exists(data['username'], data['email'], strict=True):
         return 'Invalid token has been specified', 400
-
     return 'Auth token is valid'

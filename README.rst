@@ -14,6 +14,13 @@ Run these commands in order to launch the project at the development mode::
     export APP_SETTINGS=settings_local.py
     flask run
 
+Use these commands to execute the project tests:
+
+    export FLASK_DEBUG=1
+    export FLASK_APP=task_tracker_api
+    export APP_SETTINGS=settings_local.py
+    flask run
+
 Project License
 ===============
 

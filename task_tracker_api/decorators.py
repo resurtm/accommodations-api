@@ -4,48 +4,55 @@ import jwt
 from flask import request, make_response, jsonify
 from flask.views import MethodView
 
-from task_tracker_api.main import app, mongo
+from task_tracker_api.main import app
+from task_tracker_api.repos.user import find_user, user_exists
 from task_tracker_api.tools import validate_json
 
 
-def jwt_auth(wrapped):
-    @functools.wraps(wrapped)
-    def decorator(*args, **kwargs):
-        auth_header = request.headers.get('Authorization')
-        if not auth_header or not auth_header.startswith('bearer '):
-            return jsonify({'ok': False,
-                            'msg': 'Authentication required'}), 401
+def jwt_auth(need_user=False):
+    def decorator(wrapped):
+        @functools.wraps(wrapped)
+        def wrapper(*args, **kwargs):
+            auth_header = request.headers.get('Authorization')
+            if not auth_header or not auth_header.startswith('bearer '):
+                return jsonify({'ok': False,
+                                'msg': 'Authentication required'}), 401
 
-        try:
-            token = auth_header.split(' ')[1]
-        except IndexError:
-            return jsonify({'ok': False,
-                            'msg': 'Bearer token malformed'}), 401
+            try:
+                token = auth_header.split(' ')[1]
+            except IndexError:
+                return jsonify({'ok': False,
+                                'msg': 'Bearer token malformed'}), 401
 
-        try:
-            data = jwt.decode(token,
-                              app.config['JWT_SECRET_KEY'],
-                              algorithms=['HS256'])
-        except jwt.exceptions.DecodeError:
-            return jsonify({'ok': False,
-                            'msg': 'Invalid bearer token'}), 401
+            try:
+                data = jwt.decode(token,
+                                  app.config['JWT_SECRET_KEY'],
+                                  algorithms=['HS256'])
+            except jwt.exceptions.DecodeError:
+                return jsonify({'ok': False,
+                                'msg': 'Invalid bearer token'}), 401
 
-        count = mongo.db.users.count({'$and': [
-            {'username': data['username']},
-            {'email': data['email']},
-        ]})
-        if count == 0:
-            return jsonify({'ok': False,
-                            'msg': 'Invalid bearer token'}), 401
+            if need_user:
+                user = find_user(data['username'], data['email'])
+                if not user:
+                    return jsonify({'ok': False,
+                                    'msg': 'Invalid bearer token'}), 401
+                kwargs['user'] = user
+            else:
+                if user_exists(data['username'], data['email'], true):
+                    return jsonify({'ok': False,
+                                    'msg': 'Invalid bearer token'}), 401
 
-        return wrapped(*args, **kwargs)
+            return wrapped(*args, **kwargs)
+
+        return wrapper
 
     return decorator
 
 
 def jsonified(wrapped):
     @functools.wraps(wrapped)
-    def decorator(*args, **kwargs):
+    def wrapper(*args, **kwargs):
         if request.is_json or request.method == 'GET':
             self = None
             if len(args) > 0 and isinstance(args[0], MethodView):
@@ -88,16 +95,17 @@ def jsonified(wrapped):
         resp.headers['Content-Type'] = 'application/json'
         return resp
 
-    return decorator
+    return wrapper
 
 
 def validate_data(schema, err='Unable to validate incoming data'):
     def decorator(wrapped):
         @functools.wraps(wrapped)
-        def wrapper(data, *args, **kwargs):
+        def wrapper(*args, **kwargs):
+            data = args[1] if isinstance(args[0], MethodView) else args[0]
             if not validate_json(data, schema):
                 return err, 400
-            return wrapped(data, *args, **kwargs)
+            return wrapped(*args, **kwargs)
 
         return wrapper
 

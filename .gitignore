@@ -6,3 +6,5 @@
 __pycache/
 /build/
 /dist/
+/.eggs/
+/.cache/
