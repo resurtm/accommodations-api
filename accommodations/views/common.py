@@ -1,5 +1,5 @@
-from task_tracker_api.decorators import jsonified, jwt_auth
-from task_tracker_api.main import app
+from accommodations.decorators import jsonified, jwt_auth
+from accommodations.main import app
 
 
 @app.route('/v1/guest-ping', methods=['POST'])

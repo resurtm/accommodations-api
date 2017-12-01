@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from setuptools import setup
 
 
@@ -7,13 +9,13 @@ def readme():
 
 
 setup(
-    name='task-tracker-api',
-    packages=['task_tracker_api'],
+    name='accommodations-api',
+    packages=['accommodations'],
     version='0.0.1',
-    description='Task Tracker API',
+    description='Accommodations API',
     long_description=readme(),
-    url='https://github.com/resurtm/task-tracker-api',
-    download_url='https://github.com/resurtm/task-tracker-api/archive/v0.0.1.tar.gz',
+    url='https://github.com/resurtm/accommodations-api',
+    download_url='https://github.com/resurtm/accommodations-api/archive/v0.0.1.tar.gz',
     author='resurtm',
     author_email='resurtm@gmail.com',
     license='MIT',

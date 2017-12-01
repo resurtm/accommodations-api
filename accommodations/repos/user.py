@@ -1,4 +1,4 @@
-from task_tracker_api.main import mongo
+from accommodations.main import mongo
 
 
 def user_exists(username, email, strict=False):

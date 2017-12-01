@@ -3,9 +3,9 @@ import datetime
 import bcrypt
 import jwt
 
-from task_tracker_api.decorators import jsonified, validate_data
-from task_tracker_api.main import app
-from task_tracker_api.repos.user import user_exists, upsert_user, find_user
+from accommodations.decorators import jsonified, validate_data
+from accommodations.main import app
+from accommodations.repos.user import user_exists, upsert_user, find_user
 
 
 @app.route('/v1/auth/signup', methods=['POST'])

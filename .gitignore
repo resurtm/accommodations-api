@@ -1,7 +1,7 @@
 /.idea/
 /*.egg-info/
 /venv/
-/task_tracker_api/settings_local.py
+/accommodations/settings_local.py
 *.py[doc]
 __pycache/
 /build/

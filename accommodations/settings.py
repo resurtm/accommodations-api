@@ -5,6 +5,6 @@ DEBUG = False
 SECRET_KEY = '!!! CHANGE THIS !!!'
 JWT_SECRET_KEY = '!!! CHANGE THIS !!!'
 
-MONGO_DBNAME = 'task_tracker'
+MONGO_DBNAME = 'accommodations'
 
 JSON_SCHEMA_PATH = p.join(p.dirname(p.abspath(__file__)), 'json_schema')

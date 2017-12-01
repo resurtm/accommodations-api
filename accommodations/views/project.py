@@ -1,8 +1,8 @@
 from flask.views import MethodView
 
-from task_tracker_api.decorators import jsonified, jwt_auth, validate_data
-from task_tracker_api.main import app
-from task_tracker_api.repos.project import project_exists, upsert_project
+from accommodations.decorators import jsonified, jwt_auth, validate_data
+from accommodations.main import app
+from accommodations.repos.project import project_exists, upsert_project
 
 
 class ProjectAPI(MethodView):

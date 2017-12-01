@@ -4,9 +4,9 @@ import jwt
 from flask import request, make_response, jsonify
 from flask.views import MethodView
 
-from task_tracker_api.main import app
-from task_tracker_api.repos.user import find_user, user_exists
-from task_tracker_api.tools import validate_json
+from accommodations.main import app
+from accommodations.repos.user import find_user, user_exists
+from accommodations.tools import validate_json
 
 
 def jwt_auth(need_user=False):

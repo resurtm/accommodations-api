@@ -1,23 +1,22 @@
-Task Tracker API
-================
+Accommodations API
+==================
 
-| https://github.com/resurtm/task-tracker-api
-| https://pypi.python.org/pypi/task-tracker-api
+TODO:
 
 How to Launch
 -------------
 
-Run these commands in order to launch the project at the development mode::
+Initial project deployment commands::
 
+    virtualenv --python=python3 venv
+    source venv/bin/activate
+    pip install -e .
+
+Run these commands in order to launch the project in development mode::
+
+    source venv/bin/activate
     export FLASK_DEBUG=1
-    export FLASK_APP=task_tracker_api
-    export APP_SETTINGS=settings_local.py
-    flask run
-
-Use these commands to execute the project tests:
-
-    export FLASK_DEBUG=1
-    export FLASK_APP=task_tracker_api
+    export FLASK_APP=accommodations
     export APP_SETTINGS=settings_local.py
     flask run
 

@@ -4,7 +4,7 @@ from os import path as p
 import jsonschema
 from bson import ObjectId
 
-from task_tracker_api.main import app
+from accommodations.main import app
 
 
 def validate_json(data, schema):

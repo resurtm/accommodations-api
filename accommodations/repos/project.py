@@ -1,7 +1,7 @@
 import json
 
-from task_tracker_api.main import mongo
-from task_tracker_api.tools import JSONEncoder
+from accommodations.main import mongo
+from accommodations.tools import JSONEncoder
 
 
 def project_exists(title, owner):

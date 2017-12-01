@@ -1,2 +1,2 @@
-graft task_tracker_api
-recursive-exclude task_tracker_api local_settings.py
+graft accommodations
+recursive-exclude accommodations settings_local.py
