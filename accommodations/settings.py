@@ -4,6 +4,7 @@ DEBUG = False
 
 SECRET_KEY = '!!! CHANGE THIS !!!'
 JWT_SECRET_KEY = '!!! CHANGE THIS !!!'
+CORS_ORIGINS = []
 
 MONGO_DBNAME = 'accommodations'
 

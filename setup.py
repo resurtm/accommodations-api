@@ -30,6 +30,7 @@ setup(
         'bcrypt',
         'PyJWT',
         'python-slugify',
+        'flask-cors',
     ],
     setup_requires=[
         'pytest-runner',
