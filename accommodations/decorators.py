@@ -1,6 +1,7 @@
 import functools
 
 import accommodations.repos.user as User
+import accommodations.repos.bl_token as BlToken
 import jwt
 from accommodations.main import app
 from accommodations.tools import validate_json
@@ -8,39 +9,46 @@ from flask import request, make_response, jsonify
 from flask.views import MethodView
 
 
-def jwt_auth(need_user=False):
+def jwt_auth(need_user=False, need_token=False):
     def decorator(wrapped):
         @functools.wraps(wrapped)
         def wrapper(*args, **kwargs):
             auth_header = request.headers.get('Authorization')
             if not auth_header or not auth_header.startswith('bearer '):
-                return jsonify({'ok': False,
+                return jsonify({'data': {}, 'ok': False,
                                 'msg': 'Authentication required'}), 401
 
             try:
                 token = auth_header.split(' ')[1]
             except IndexError:
-                return jsonify({'ok': False,
+                return jsonify({'data': {}, 'ok': False,
                                 'msg': 'Bearer token malformed'}), 401
+
+            if BlToken.exists(token):
+                return jsonify({'data': {}, 'ok': False,
+                                'msg': 'Auth token has been blacklisted'}), 401
 
             try:
                 data = jwt.decode(token,
                                   app.config['JWT_SECRET_KEY'],
                                   algorithms=['HS256'])
             except jwt.exceptions.DecodeError:
-                return jsonify({'ok': False,
+                return jsonify({'data': {}, 'ok': False,
                                 'msg': 'Invalid bearer token'}), 401
 
             if need_user:
-                user = User.find(data['username'], data['email'])
+                user = User.find(data['email'], data['username'])
                 if not user:
-                    return jsonify({'ok': False,
+                    return jsonify({'data': {}, 'ok': False,
                                     'msg': 'Invalid bearer token'}), 401
                 kwargs['user'] = user
             else:
-                if User.exists(data['username'], data['email'], true):
-                    return jsonify({'ok': False,
+                if User.exists(data['username'], data['email']):
+                    return jsonify({'data': {}, 'ok': False,
                                     'msg': 'Invalid bearer token'}), 401
+
+            if need_token:
+                kwargs['token'] = token
 
             return wrapped(*args, **kwargs)
 
@@ -61,7 +69,7 @@ def jsonified(wrapped):
 
             tmp = list(args)
             if request.method != 'GET':
-                tmp.insert(0, request.json)
+                tmp.insert(0, request.get_json(silent=True))
             if self is not None:
                 tmp.insert(0, self)
             args = tuple(tmp)

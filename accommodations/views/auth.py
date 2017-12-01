@@ -1,9 +1,10 @@
 import datetime
 
 import accommodations.repos.user as User
+import accommodations.repos.bl_token as BlToken
 import bcrypt
 import jwt
-from accommodations.decorators import jsonified, validate_data
+from accommodations.decorators import jsonified, validate_data, jwt_auth
 from accommodations.main import app
 
 
@@ -13,7 +14,7 @@ from accommodations.main import app
 def signin(json):
     user = User.find_by_email(json['email'])
     if not user:
-        return 'Unable to find user for sign in', 400
+        return 'Unable to find user to sign in', 400
     if not bcrypt.checkpw(json['password'].encode('utf-8'), user['password']):
         return 'Invalid password has been provided', 400
     token = jwt.encode(
@@ -24,6 +25,14 @@ def signin(json):
         algorithm='HS256'
     )
     return 'Signed in successfully', {'token': token.decode('utf-8')}
+
+
+@app.route('/v1/auth/signout', methods=['POST'])
+@jwt_auth(need_user=True, need_token=True)
+@jsonified
+def signout(_, user, token):
+    BlToken.upsert(token, user)
+    return 'Token has been blacklisted'
 
 
 @app.route('/v1/auth/signup', methods=['POST'])
@@ -43,6 +52,8 @@ def signup(json):
 def check(json):
     if 'token' not in json:
         return 'Unable to validate auth check data', 400
+    if BlToken.exists(json['token']):
+        return 'Token has been blacklisted', 400
     try:
         data = jwt.decode(json['token'],
                           app.config['JWT_SECRET_KEY'],

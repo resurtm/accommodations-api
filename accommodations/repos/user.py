@@ -28,3 +28,12 @@ def upsert(data):
 
 def find_by_email(email):
     return mongo.db.users.find_one({'email': email})
+
+
+def find(email, username):
+    return mongo.db.users.find_one({
+        '$or': [
+            {'email': email},
+            {'username': username},
+        ],
+    })
