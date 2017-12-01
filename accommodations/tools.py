@@ -2,9 +2,8 @@ import json
 from os import path as p
 
 import jsonschema
-from bson import ObjectId
-
 from accommodations.main import app
+from bson import ObjectId
 
 
 def validate_json(data, schema):

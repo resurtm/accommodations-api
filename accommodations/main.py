@@ -19,5 +19,4 @@ def after_request(response):
 import accommodations.views.auth  # noqa
 # noinspection PyUnresolvedReferences
 import accommodations.views.common  # noqa
-# noinspection PyUnresolvedReferences
-import accommodations.views.project  # noqa
+# import accommodations.views.project

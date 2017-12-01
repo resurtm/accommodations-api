@@ -30,7 +30,6 @@ setup(
         'bcrypt',
         'PyJWT',
         'python-slugify',
-        'bson',
     ],
     setup_requires=[
         'pytest-runner',

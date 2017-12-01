@@ -1,38 +1,30 @@
 from accommodations.main import mongo
 
 
-def user_exists(username, email, strict=False):
+def exists(username, email):
     return 0 != mongo.db.users.count({
-        '$and' if strict else '$or': [
+        '$or': [
             {'username': username},
             {'email': email},
         ],
     })
 
 
-def upsert_user(username, email):
+def upsert(data):
     res = mongo.db.users.update_one(
-        {
-            '$or': [
-                {'username': username},
-                {'email': email},
-            ],
-        },
-        {
-            '$setOnInsert': {
-                'username': username,
-                'email': email,
-            },
-        },
+        {'$or': [
+            {'username': data['username']},
+            {'email': data['email']},
+        ]},
+        {'$setOnInsert': {
+            'username': data['username'],
+            'email': data['email'],
+            'password': data['password'],
+        }},
         upsert=True,
     )
     return mongo.db.users.find_one({'_id': res.upserted_id})
 
 
-def find_user(username, email):
-    return mongo.db.users.find_one({
-        '$and': [
-            {'username': username},
-            {'email': email},
-        ],
-    })
+def find_by_email(email):
+    return mongo.db.users.find_one({'email': email})

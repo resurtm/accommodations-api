@@ -1,12 +1,11 @@
 import functools
 
+import accommodations.repos.user as User
 import jwt
+from accommodations.main import app
+from accommodations.tools import validate_json
 from flask import request, make_response, jsonify
 from flask.views import MethodView
-
-from accommodations.main import app
-from accommodations.repos.user import find_user, user_exists
-from accommodations.tools import validate_json
 
 
 def jwt_auth(need_user=False):
@@ -33,13 +32,13 @@ def jwt_auth(need_user=False):
                                 'msg': 'Invalid bearer token'}), 401
 
             if need_user:
-                user = find_user(data['username'], data['email'])
+                user = User.find(data['username'], data['email'])
                 if not user:
                     return jsonify({'ok': False,
                                     'msg': 'Invalid bearer token'}), 401
                 kwargs['user'] = user
             else:
-                if user_exists(data['username'], data['email'], true):
+                if User.exists(data['username'], data['email'], true):
                     return jsonify({'ok': False,
                                     'msg': 'Invalid bearer token'}), 401
 
@@ -91,7 +90,7 @@ def jsonified(wrapped):
 
         resp = make_response(jsonify({'ok': ok,
                                       'msg': msg,
-                                      **data}), status)
+                                      'data': data}), status)
         resp.headers['Content-Type'] = 'application/json'
         return resp
 

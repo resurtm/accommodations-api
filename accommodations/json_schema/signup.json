@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "description": "Validates data for signup endpoint",
+  "description": "Validates data for sign up",
   "type": "object",
   "properties": {
     "username": {
@@ -9,35 +9,23 @@
       "maxLength": 50,
       "pattern": "^[A-Za-z0-9_-]{5,50}$"
     },
-    "password": {
-      "type": "string",
-      "minLength": 6,
-      "maxLength": 255
-    },
     "email": {
       "type": "string",
       "minLength": 5,
       "maxLength": 50,
       "format": "email"
     },
-    "first_name": {
+    "password": {
       "type": "string",
-      "minLength": 2,
-      "maxLength": 50
-    },
-    "last_name": {
-      "type": "string",
-      "minLength": 2,
-      "maxLength": 50
+      "minLength": 6,
+      "maxLength": 255
     }
   },
-  "minProperties": 5,
-  "maxProperties": 5,
+  "minProperties": 3,
+  "maxProperties": 3,
   "required": [
     "username",
     "password",
-    "email",
-    "first_name",
-    "last_name"
+    "email"
   ]
 }

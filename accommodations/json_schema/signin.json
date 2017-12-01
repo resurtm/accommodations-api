@@ -1,13 +1,13 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "description": "Validates data for signin endpoint",
+  "description": "Validates data for sign in",
   "type": "object",
   "properties": {
-    "username": {
+    "email": {
       "type": "string",
       "minLength": 5,
       "maxLength": 50,
-      "pattern": "^[A-Za-z0-9_-]{5,50}$"
+      "format": "email"
     },
     "password": {
       "type": "string",
@@ -18,7 +18,7 @@
   "minProperties": 2,
   "maxProperties": 2,
   "required": [
-    "username",
+    "email",
     "password"
   ]
 }
