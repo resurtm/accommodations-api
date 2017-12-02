@@ -1,12 +1,13 @@
 import functools
 
-import accommodations.repos.user as User
-import accommodations.repos.bl_token as BlToken
 import jwt
-from accommodations.main import app
-from accommodations.tools import validate_json
 from flask import request, make_response, jsonify
 from flask.views import MethodView
+
+import accommodations.repos.bl_token as BlToken
+import accommodations.repos.user as User
+from accommodations.main import app
+from accommodations.tools import validate_json
 
 
 def jwt_auth(need_user=False, need_token=False):
@@ -34,18 +35,18 @@ def jwt_auth(need_user=False, need_token=False):
                                   algorithms=['HS256'])
             except jwt.exceptions.DecodeError:
                 return jsonify({'data': {}, 'ok': False,
-                                'msg': 'Invalid bearer token'}), 401
+                                'msg': 'Cannot decode token'}), 401
 
             if need_user:
                 user = User.find(data['email'], data['username'])
                 if not user:
                     return jsonify({'data': {}, 'ok': False,
-                                    'msg': 'Invalid bearer token'}), 401
+                                    'msg': 'User not found by token'}), 401
                 kwargs['user'] = user
             else:
-                if User.exists(data['username'], data['email']):
+                if User.exists(data['email'], data['username']):
                     return jsonify({'data': {}, 'ok': False,
-                                    'msg': 'Invalid bearer token'}), 401
+                                    'msg': 'User not found by token'}), 401
 
             if need_token:
                 kwargs['token'] = token

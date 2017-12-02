@@ -10,8 +10,8 @@ def upsert(token, user):
         }},
         upsert=True,
     )
-    return mongo.db.bl_token.find_one({'_id': res.upserted_id})
+    return mongo.db.bl_tokens.find_one({'_id': res.upserted_id})
 
 
 def exists(token):
-    return 0 != mongo.db.bl_token.count({'token': token})
+    return 0 != mongo.db.bl_tokens.count({'token': token})

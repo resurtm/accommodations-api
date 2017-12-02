@@ -1,9 +1,10 @@
 import datetime
 
-import accommodations.repos.user as User
-import accommodations.repos.bl_token as BlToken
 import bcrypt
 import jwt
+
+import accommodations.repos.bl_token as BlToken
+import accommodations.repos.user as User
 from accommodations.decorators import jsonified, validate_data, jwt_auth
 from accommodations.main import app
 
