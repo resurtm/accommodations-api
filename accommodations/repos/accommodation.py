@@ -17,17 +17,17 @@ def insert(owner, doc):
     return str(res.inserted_id)
 
 
-def find_all(owner, before=None, after=None, limit=10, order_by='updated_at'):
+def find_all(owner, before=None, after=None, limit=10, order_by=None):
+    owner = owner if isinstance(owner, ObjectId) else owner['_id']
     filter = {'$and': [
-        {'owners': {'$all': [
-            owner if isinstance(owner, ObjectId) else owner['_id'],
-        ]}},
+        {'owners': {'$all': [owner]}},
     ]}
     if before is not None:
         filter['$and'].append({'_id': {'$lte': ObjectId(before)}})
     if after is not None:
         filter['$and'].append({'_id': {'$gte': ObjectId(after)}})
-
+    if order_by is None:
+        order_by = 'updated_at'
     return mongo.db.accommodations.find(**{
         'filter': filter,
         'limit': limit,
@@ -37,4 +37,14 @@ def find_all(owner, before=None, after=None, limit=10, order_by='updated_at'):
             order_by,
             pymongo.DESCENDING if order_by[0] == '-' else pymongo.ASCENDING,
         )],
+    })
+
+
+def find_one(owner, id):
+    owner = owner if isinstance(owner, ObjectId) else owner['_id']
+    return mongo.db.accommodations.find_one({
+        '$and': [
+            {'owners': {'$all': [owner]}},
+            {'_id': ObjectId(id)}
+        ],
     })

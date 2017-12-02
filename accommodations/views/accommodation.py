@@ -1,6 +1,8 @@
+import json
+
 from flask import request
 from flask.views import MethodView
-import json
+
 import accommodations.repos.accommodation as Accommodation
 from accommodations.decorators import jsonified, jwt_auth, validate_data
 from accommodations.main import app
@@ -21,14 +23,17 @@ class AccommodationAPI(MethodView):
             request.args.get('before', type=str),
             request.args.get('after', type=str),
             limit,
-            request.args.get('order_by', 'updated_at', str),
+            request.args.get('order_by', type=str),
         )
         return '{} accommodations fetched'.format(limit), {
             'docs': json.loads(JSONEncoder().encode([doc for doc in docs]))
         }
 
     def get_one(self, user, id):
-        return {'data': {}, 'method': 'read project {}'.format(str(id))}
+        doc = Accommodation.find_one(user, id)
+        return '1 accommodation fetched', {
+            'doc': json.loads(JSONEncoder().encode(doc))
+        }
 
     @jwt_auth()
     @jsonified
@@ -50,5 +55,5 @@ view = AccommodationAPI.as_view('project_api')
 app.add_url_rule('/v1/accommodation', view_func=view, methods=['POST'])
 app.add_url_rule('/v1/accommodation', defaults={'id': None},
                  view_func=view, methods=['GET'])
-app.add_url_rule('/v1/accommodation/<int:id>', view_func=view,
+app.add_url_rule('/v1/accommodation/<id>', view_func=view,
                  methods=['GET', 'PUT', 'DELETE'])
