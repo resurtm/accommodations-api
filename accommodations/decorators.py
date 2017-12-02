@@ -26,7 +26,7 @@ def jwt_auth(need_user=False, need_token=False):
 
             if BlToken.exists(token):
                 return jsonify({'data': {}, 'ok': False,
-                                'msg': 'Auth token has been blacklisted'}), 401
+                                'msg': 'Auth token is blacklisted'}), 401
 
             try:
                 data = jwt.decode(token,

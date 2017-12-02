@@ -32,7 +32,7 @@ def signin(json):
 @jsonified
 def signout(_, user, token):
     BlToken.upsert(token, user)
-    return 'Token has been blacklisted'
+    return 'Token has been made blacklisted'
 
 
 @app.route('/v1/auth/signup', methods=['POST'])
